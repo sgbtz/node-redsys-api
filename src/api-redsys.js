@@ -36,10 +36,17 @@ class Redsys {
   }
 
   decodeMerchantParameters(data) {
-    const decodedData = JSON.parse(base64url.decode(data, 'utf8'));
+    return this.parmsToObject(JSON.parse(base64url.decode(data, 'utf8')));
+  }
+
+  parmsToObject(data) {
     const res = {};
-    Object.keys(decodedData).forEach((param) => {
-      res[decodeURIComponent(param)] = decodeURIComponent(decodedData[param]);
+    Object.keys(data).forEach((param) => {
+    const decode = decodeURIComponent(data[param]);
+    if (decode == "[object Object]")
+    res[decodeURIComponent(param)] = this.parmsToObject(data[param]);
+    else
+    res[decodeURIComponent(param)] = decode;
     });
     return res;
   }
